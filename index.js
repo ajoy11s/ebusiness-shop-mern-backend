@@ -45,7 +45,21 @@ async function run() {
       try {
         const result = await tblregisteruseradd.findOne(query);
         if (result) {
-          console.log(result);
+          res.send(result);
+        } else {
+          res.status(404).send({ message: "User not found" });
+        }
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: "Internal Server Error" });
+      }
+    });
+
+    app.get("/register_user_all_data", async (req, res) => {
+      try {
+        const query = database.collection("tblregisteruseradd").find();
+        const result = await query.toArray();
+        if (result) {
           res.send(result);
         } else {
           res.status(404).send({ message: "User not found" });
@@ -72,9 +86,7 @@ async function run() {
 
     app.get("/dashboard_get_categorylist", async (req, res) => {
       const query = database.collection("tbladdcategory").find();
-      console.log(query);
       const result = await query.toArray();
-      console.log(result);
       res.send(result);
     });
 
