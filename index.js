@@ -11,7 +11,6 @@ app.use(express.json());
 
 
 //mongoDB Code added with function
-
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const { error } = require('console');
 const uri = `mongodb+srv://${process.env.DB_USER_NAME}:${process.env.DB_PASSWORD}@cluster0.q2fr3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
