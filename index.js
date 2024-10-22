@@ -31,53 +31,54 @@ async function run() {
     await client.connect();
 
     const database = client.db("ebusiness_shop_dbuser");
-   
-    const testdatacollection = database.collection("testdata");
-   /* const doc = {
-        title: "Ajoy Kumar Paul",
-        content: "Test MongoDB",
+
+    const tblregisteruseradd = database.collection("tblregisteruseradd");
+    app.post("/register_user_add", async (req, res) => {
+      const userlist = req.body;
+      const result = await tblregisteruseradd.insertOne(userlist);
+      res.send(result);
+    });
+    app.get("/register_user_data/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+
+      try {
+        const result = await tblregisteruseradd.findOne(query);
+        if (result) {
+          console.log(result);
+          res.send(result);
+        } else {
+          res.status(404).send({ message: "User not found" });
+        }
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: "Internal Server Error" });
       }
-      const result = await testdata_collection.insertOne(doc);
-      console.log(`A document was inserted with the _id: ${result.insertedId}`);*/
+    });
 
-      app.get("/testdata", async (req, res) => {
-        const query = testdatacollection.find();
-        console.log(query);
-        const result = await query.toArray();
-        console.log(result);
-        res.send(result);
-      });
+    const tbladdproduct = database.collection("tbladdproduct");
+    app.post("/dashboard_add_product", async (req, res) => {
+      const productlist = req.body;
+      const result = await tbladdproduct.insertOne(productlist);
+      res.send(result);
+    });
 
-      const tblregisteruseradd = database.collection("tblregisteruseradd");
-      app.post("/register_user_add", async (req, res) => {
-        const userlist = req.body;
-        const result = await tblregisteruseradd.insertOne(userlist);
-        res.send(result);
-      });
+    const tbladdcategory = database.collection("tbladdcategory");
+    app.post("/dashboard_add_categorylist", async (req, res) => {
+      const categorylist = req.body;
+      const result = await tbladdcategory.insertOne(categorylist);
+      res.send(result);
+    });
 
-      const tbladdproduct = database.collection("tbladdproduct");
-      app.post("/dashboard_add_product", async (req, res) => {
-        const productlist = req.body;
-        const result = await tbladdproduct.insertOne(productlist);
-        res.send(result);
-      });
+    app.get("/dashboard_get_categorylist", async (req, res) => {
+      const query = database.collection("tbladdcategory").find();
+      console.log(query);
+      const result = await query.toArray();
+      console.log(result);
+      res.send(result);
+    });
 
-      const tbladdcategory = database.collection("tbladdcategory");
-      app.post("/dashboard_add_categorylist", async (req, res) => {
-        const categorylist = req.body;
-        const result = await tbladdcategory.insertOne(categorylist);
-        res.send(result);
-      });
 
-      app.get("/dashboard_get_categorylist", async (req, res) => {
-        const query = database.collection("tbladdcategory").find();
-        console.log(query);
-        const result = await query.toArray();
-        console.log(result);
-        res.send(result);
-      });
-  
-  
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
@@ -87,8 +88,8 @@ async function run() {
     //await client.close();
   }
 }
-run().catch((error)=>{
-    console.log(error);
+run().catch((error) => {
+  console.log(error);
 });
 
 //mongoDB Code end with function
