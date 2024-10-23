@@ -70,6 +70,42 @@ async function run() {
       }
     });
 
+
+    app.put('/update_user_data/:email', async (req, res) => {
+      const email = req.params.email;
+      const { name, tel, address } = req.body;
+
+      // Validate parameters (you can use a library like Joi for more complex validation)
+      if (!email || !name || !tel || !address) {
+        return res.status(400).send({ message: 'All fields are required.' });
+      }
+
+      const filter = { email: email };
+      const options = { upsert: true };
+
+      const updatedUser = {
+        $set: {
+          name: name,
+          address: address,
+          tel: tel
+        },
+      };
+
+      try {
+        const result = await tblregisteruseradd.updateOne(filter, updatedUser, options);
+
+        // Check if the update was successful
+        if (result.modifiedCount === 0 && result.upsertedCount === 0) {
+          return res.status(404).send({ message: 'User not found and no update was made.' });
+        }
+
+        res.send({ message: 'User updated successfully', result });
+      } catch (error) {
+        console.error('Error updating user:', error);
+        res.status(500).send({ message: 'Internal server error' });
+      }
+    });
+
     const tbladdproduct = database.collection("tbladdproduct");
     app.post("/dashboard_add_product", async (req, res) => {
       const productlist = req.body;
