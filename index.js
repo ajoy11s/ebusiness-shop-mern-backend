@@ -11,7 +11,7 @@ app.use(express.json());
 
 
 //mongoDB Code added with function
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const { error } = require('console');
 const uri = `mongodb+srv://${process.env.DB_USER_NAME}:${process.env.DB_PASSWORD}@cluster0.q2fr3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
 
@@ -144,6 +144,26 @@ async function run() {
         res.status(500).send({ message: error });
       }
     });
+
+    app.get("/get_single_product_by_id/:_id", async (req, res) => {
+      const _id = req.params._id; // Get _id from the URL
+      const query = { _id: new ObjectId(_id) }; // Create a query object
+    
+      try {
+        const tbladdproduct = database.collection("tbladdproduct");
+        const result = await tbladdproduct.findOne(query);
+    
+        if (result) {
+          res.send(result); // Send the found product
+        } else {
+          res.status(404).send({ message: "Product not found" });
+        }
+      } catch (error) {
+        console.error('Error fetching product:', error.message);
+        res.status(500).send({ message: "Internal server error" });
+      }
+    });
+  
 
 
     const tbladdcategory = database.collection("tbladdcategory");
