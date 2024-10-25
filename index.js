@@ -113,6 +113,39 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/get_all_product_data", async (req, res) => {
+      try {
+        const query = database.collection("tbladdproduct").find();
+        const result = await query.toArray();
+        if (result) {
+          res.send(result);
+        } else {
+          res.status(404).send({ message: "Product not found" });
+        }
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: "Internal Server Error" });
+      }
+    });
+
+    app.get("/get_all_product_data_by_categoryid/:category_id", async (req, res) => {
+      try {
+        const category_id = req.params.category_id;
+        const query = { category_id: category_id };
+        const result = await database.collection("tbladdproduct").find(query).toArray();
+        //const result = await query.toArray();
+        if (result) {
+          res.send(result);
+        } else {
+          res.status(404).send({ message: "Products not found" });
+        }
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: error });
+      }
+    });
+
+
     const tbladdcategory = database.collection("tbladdcategory");
     app.post("/dashboard_add_categorylist", async (req, res) => {
       const categorylist = req.body;
@@ -120,7 +153,7 @@ async function run() {
       res.send(result);
     });
 
-    app.get("/dashboard_get_categorylist", async (req, res) => {
+    app.get("/get_all_category_data", async (req, res) => {
       const query = database.collection("tbladdcategory").find();
       const result = await query.toArray();
       res.send(result);
